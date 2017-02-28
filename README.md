@@ -23,7 +23,6 @@ Then in `config/app.php` add the following to the `providers` array:
 
 ```php
 Socialgest\Instapago\InstapagoServiceProvider::class
-
 ```
 
 
