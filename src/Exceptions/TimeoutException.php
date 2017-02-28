@@ -32,7 +32,6 @@ namespace Socialgest\Instapago\Exceptions;
 /**
  * Custom TimeoutException.
  */
-
 class TimeoutException extends \Exception
 {
     //

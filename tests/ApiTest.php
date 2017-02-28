@@ -42,28 +42,28 @@ class ApiTest extends TestCase
     private function _dataPagoPrueba()
     {
         return [
-            'amount' => '200',
-            'description' => 'test',
-            'cardHolder' => 'jon doe',
-            'cardHolderId' => '11111111',
-            'cardNumber' => '4111111111111111',
-            'cvc' => '123',
+            'amount'         => '200',
+            'description'    => 'test',
+            'cardHolder'     => 'jon doe',
+            'cardHolderId'   => '11111111',
+            'cardNumber'     => '4111111111111111',
+            'cvc'            => '123',
             'expirationDate' => '12/2019',
-            'IP' => '127.0.0.1',
+            'IP'             => '127.0.0.1',
         ];
     }
 
     private function _dataPagoPruebaError()
     {
         return [
-            'amount' => '200',
-            'description' => 'test',
-            'cardHolder' => 'jon doe',
-            'cardHolderId' => '11111111',
-            'cardNumber' => '411111111111111',
-            'cvc' => '123',
+            'amount'         => '200',
+            'description'    => 'test',
+            'cardHolder'     => 'jon doe',
+            'cardHolderId'   => '11111111',
+            'cardNumber'     => '411111111111111',
+            'cvc'            => '123',
             'expirationDate' => '12/2019',
-            'IP' => '127.0.0.1',
+            'IP'             => '127.0.0.1',
         ];
     }
 
@@ -96,9 +96,9 @@ class ApiTest extends TestCase
         return $pago;
     }
 
-  /**
-   * @depends testCreaPagoReserva
-   */
+    /**
+     * @depends testCreaPagoReserva
+     */
     public function testContinuarPago($pago)
     {
         $continue = $this->api->continuePayment([
@@ -109,20 +109,20 @@ class ApiTest extends TestCase
         $this->assertContains('pago completado', strtolower($continue['msg_banco']));
     }
 
-  /**
-   * @depends testCreaPagoDirecto
-   */
+    /**
+     * @depends testCreaPagoDirecto
+     */
     public function testInfoPago($pago)
     {
         $info = $this->api->query($pago['id_pago']);
         $this->assertContains('autorizada', strtolower($info['msg_banco']));
     }
 
-  /**
-   * @depends testCreaPagoDirecto
-   * En modo pruebas este método no funciona.
-   * El personal de instapago asegura que en producción no hay problemas
-   */
+    /**
+     * @depends testCreaPagoDirecto
+     * En modo pruebas este método no funciona.
+     * El personal de instapago asegura que en producción no hay problemas
+     */
     public function testCancelPago($pago)
     {
         $info = $this->api->cancel($pago['id_pago']);
