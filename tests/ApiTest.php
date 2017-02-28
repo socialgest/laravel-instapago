@@ -26,10 +26,10 @@
  * @license MIT License
  * @copyright 2016 Angel Cruz
  */
+
 namespace Socialgest\Instapago;
 
-use \PHPUnit_Framework_TestCase as TestCase;
-use Socialgest\Instapago\Instapago;
+use PHPUnit_Framework_TestCase as TestCase;
 
 class ApiTest extends TestCase
 {
@@ -44,14 +44,14 @@ class ApiTest extends TestCase
     public function testCreaPagoDirecto()
     {
         $paymentData = [
-            'amount' => '200',
-            'description' => 'test',
-            'cardHolder' => 'jon doe',
-            'cardHolderId' => '11111111',
-            'cardNumber' => '4111111111111111',
-            'cvc' => '123',
+            'amount'         => '200',
+            'description'    => 'test',
+            'cardHolder'     => 'jon doe',
+            'cardHolderId'   => '11111111',
+            'cardNumber'     => '4111111111111111',
+            'cvc'            => '123',
             'expirationDate' => '12/2019',
-            'IP' => '127.0.0.1',
+            'IP'             => '127.0.0.1',
         ];
 
         $pago = $this->api->directPayment($paymentData);
@@ -63,14 +63,14 @@ class ApiTest extends TestCase
     public function testCreaPagoReserva()
     {
         $paymentData = [
-            'amount' => '200',
-            'description' => 'test',
-            'cardHolder' => 'jon doe',
-            'cardHolderId' => '11111111',
-            'cardNumber' => '4111111111111111',
-            'cvc' => '123',
+            'amount'         => '200',
+            'description'    => 'test',
+            'cardHolder'     => 'jon doe',
+            'cardHolderId'   => '11111111',
+            'cardNumber'     => '4111111111111111',
+            'cvc'            => '123',
             'expirationDate' => '12/2019',
-            'IP' => '127.0.0.1',
+            'IP'             => '127.0.0.1',
         ];
         $pago = $this->api->reservePayment($paymentData);
         $this->assertEquals(201, $pago['code']);

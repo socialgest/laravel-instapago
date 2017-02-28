@@ -74,7 +74,6 @@ class Instapago
 
         $response = $this->createTransaccion('payment', $fields, 'POST');
 
-
         $result = $this->checkResponseCode($response);
 
         return $result;
