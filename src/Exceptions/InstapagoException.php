@@ -32,7 +32,6 @@ namespace Socialgest\Instapago\Exceptions;
 /**
  * Custom InstapagoException.
  */
-
 class InstapagoException extends \Exception
 {
     //

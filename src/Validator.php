@@ -34,7 +34,7 @@ namespace Socialgest\Instapago;
  *
  * Valida las entradas de datos para los métodos del API.
  */
-class MyValidator
+class Validator
 {
     protected $validations = [];
 

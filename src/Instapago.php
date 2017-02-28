@@ -24,48 +24,46 @@ class Instapago
         ]);
     }
 
-
     /**
-    * Crear un pago diferido o reservado.
-    *
-    * @param array<string> $fields Los campos necesarios para procesar el pago.
-    *
-    * @return array<string> Respuesta de Instapago
-    */
+     * Crear un pago diferido o reservado.
+     *
+     * @param array<string> $fields Los campos necesarios para procesar el pago.
+     *
+     * @return array<string> Respuesta de Instapago
+     */
     public function reservePayment($fields)
     {
         return $this->createPayment('1', $fields);
     }
 
     /**
-    * Crear un pago directo.
-    *
-    * @param array<string> $fields Los campos necesarios
-    *                              para procesar el pago.
-    *
-    * @throws Exceptions\InstapagoException
-    *
-    * @return array<string> Respuesta de Instapago
-    */
+     * Crear un pago directo.
+     *
+     * @param array<string> $fields Los campos necesarios
+     *                              para procesar el pago.
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
     public function directPayment($fields)
     {
         return $this->createPayment('2', $fields);
     }
 
     /**
-    * Crear un pago.
-    *
-    * @param string        $type   tipo de pago ('1' o '2')
-    * @param array<string> $fields Los campos necesarios
-    *                              para procesar el pago.
-    *
-    * @throws Exceptions\InstapagoException
-    *
-    * @return array<string> Respuesta de Instapago
-    */
+     * Crear un pago.
+     *
+     * @param string        $type   tipo de pago ('1' o '2')
+     * @param array<string> $fields Los campos necesarios
+     *                              para procesar el pago.
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
     public function createPayment($type, $fields)
     {
-
         (new MyValidator())->payment()->checkThis($fields);
 
         $fields['KeyID'] = $this->key_id;
@@ -81,22 +79,20 @@ class Instapago
         return $result;
     }
 
-
     /**
-    * Completar Pago
-    * Este método funciona para procesar un bloqueo o pre-autorización
-    * para así procesarla y hacer el cobro respectivo.
-    *
-    * @param array<string> $fields Los campos necesarios
-    *                              para procesar el pago.
-    *
-    * @throws Exceptions\InstapagoException
-    *
-    * @return array<string> Respuesta de Instapago
-    */
+     * Completar Pago
+     * Este método funciona para procesar un bloqueo o pre-autorización
+     * para así procesarla y hacer el cobro respectivo.
+     *
+     * @param array<string> $fields Los campos necesarios
+     *                              para procesar el pago.
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
     public function continuePayment($fields)
     {
-
         (new MyValidator())->payment()->checkThis($fields);
 
         $fields['KeyID'] = $this->key_id;
@@ -111,16 +107,16 @@ class Instapago
     }
 
     /**
-    * Información/Consulta de Pago
-    * Este método funciona para procesar un bloqueo o pre-autorización
-    * para así procesarla y hacer el cobro respectivo.
-    *
-    * @param string $id_pago ID del pago a consultar
-    *
-    * @throws Exceptions\InstapagoException
-    *
-    * @return array<string> Respuesta de Instapago
-    */
+     * Información/Consulta de Pago
+     * Este método funciona para procesar un bloqueo o pre-autorización
+     * para así procesarla y hacer el cobro respectivo.
+     *
+     * @param string $id_pago ID del pago a consultar
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
     public function query($idPago)
     {
         (new Validator())->query()->checkThis([
@@ -141,15 +137,15 @@ class Instapago
     }
 
     /**
-    * Cancelar Pago
-    * Este método funciona para cancelar un pago previamente procesado.
-    *
-    * @param string $id_pago ID del pago a cancelar
-    *
-    * @throws Exceptions\InstapagoException
-    *
-    * @return array<string> Respuesta de Instapago
-    */
+     * Cancelar Pago
+     * Este método funciona para cancelar un pago previamente procesado.
+     *
+     * @param string $id_pago ID del pago a cancelar
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
     public function cancel($idPago)
     {
         (new Validator())->query()->checkThis([
@@ -169,17 +165,16 @@ class Instapago
         return $result;
     }
 
-
     /**
-    * Realiza Transaccion
-    * Efectúa y retorna una respuesta a un metodo de pago.
-    *
-    * @param $url string endpoint a consultar
-    * @param $fields array datos para la consulta
-    * @param $method string verbo http de la consulta
-    *
-    * @return array resultados de la transaccion
-    */
+     * Realiza Transaccion
+     * Efectúa y retorna una respuesta a un metodo de pago.
+     *
+     * @param $url string endpoint a consultar
+     * @param $fields array datos para la consulta
+     * @param $method string verbo http de la consulta
+     *
+     * @return array resultados de la transaccion
+     */
     public function createTransaccion($url, $fields, $method)
     {
         $args = [];
@@ -202,13 +197,14 @@ class Instapago
             throw new Exceptions\TimeoutException('Cannot connect to api.instapago.com');
         }
     }
-  /**
-   * Verifica y retornar el resultado de la transaccion.
-   *
-   * @param $response datos de la consulta
-   *
-   * @return array datos de transaccion
-   */
+
+    /**
+     * Verifica y retornar el resultado de la transaccion.
+     *
+     * @param $response datos de la consulta
+     *
+     * @return array datos de transaccion
+     */
     public function checkResponseCode($response)
     {
         $code = $response['code'];
