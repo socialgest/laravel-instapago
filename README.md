@@ -14,14 +14,14 @@
 
 To install, run the following command in your project directory
 
-```
+```bash
 $ composer require socialgest/laravel-instapago
 
 ```
 
 Then in `config/app.php` add the following to the `providers` array:
 
-```
+```php
 Socialgest\Instapago\InstapagoServiceProvider::class
 
 ```
@@ -29,13 +29,13 @@ Socialgest\Instapago\InstapagoServiceProvider::class
 
 Also, if you must (recommend you don't), add the Facade class to the `aliases` array in `config/app.php` as well:
 
-```
+```php
 'Instapago'    => Socialgest\Instapago\Facades\Instapago::class
 ```
 
 **But it'd be best to just inject the class, like so (this should be familiar):**
 
-```
+```php
 use Socialgest\Instapago\Instapago;
 ```
 
@@ -66,26 +66,26 @@ use Socialgest\Instapago\Instapago;
 
 public function pay()
 {
-	$instapago = new Instapago();
-	$response = $instapago->createPayment([
-            "Amount"            => "100",
-            "Description"       => "text",
-            "CardHolder"        => "Pedro Perez",
-            "CardHolderId"      => "1234567",
-            "CardNumber"        => "41111111111111",
-            "CVC"               => "604",
-            "ExpirationDate"    => "11/2016",
-            "StatusId"          => "2",
-            "IP"                => "200.200.200.200"
-	]);
-	if(isset($response->success))
-	{
-		...
-	}
-	else
-	{
-		...
-	}
+    $paymentData = [
+        'amount' => '200',
+        'description' => 'test',
+        'cardHolder' => 'jon doe',
+        'cardHolderId' => '11111111',
+        'cardNumber' => '4111111111111111',
+        'cvc' => '123',
+        'expirationDate' => '12/2019',
+        'IP' => '127.0.0.1',
+    ];
+
+    try{
+            $instapago = new Instapago();
+            $respuesta = $instapago->directPayment($paymentData);
+            // hacer algo con la respuesta
+    } catch(\Socialgest\Instapago\Instapago\Exceptions\InstapagoException $e){
+        // manejar el error
+    } catch(\Socialgest\Instapago\Instapago\Exceptions\TimeoutException $e){
+        // manejar el error
+    }     
 }
 
 ```

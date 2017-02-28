@@ -1,10 +1,11 @@
 # Changelog
 
-All Notable changes to `:package_name` will be documented in this file.
+All Notable changes to `laravel-instapago` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## NEXT - YYYY-MM-DD
+## 2.0.0 - 2017-02-27
+
 
 ### Added
 - Nothing
@@ -20,3 +21,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Security
 - Nothing
+
+## 1.0.0 - 2016-10-27
+
+Init commit and first code
