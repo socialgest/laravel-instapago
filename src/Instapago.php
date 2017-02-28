@@ -16,8 +16,8 @@ class Instapago
 
     public function __construct()
     {
-        $this->key_id = config('instapago.key_id');
-        $this->public_key_id = config('instapago.public_key_id');
+        $this->key_id = env('INSTAPAGO_KEY_ID');
+        $this->public_key_id = env('INSTAPAGO_PUBLIC_KEY_ID');
         $this->client = new Client([
             'base_uri' => self::API_HOST,
             'timeout'  => self::TIMEOUT,
@@ -34,7 +34,7 @@ class Instapago
     */
     public function reservePayment($fields)
     {
-        return $this->payment('1', $fields);
+        return $this->createPayment('1', $fields);
     }
 
     /**
@@ -70,7 +70,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['PublicKeyId'] = $this->public_key_id;
+        $fields['publicKeyId'] = $this->public_key_id;
 
         $fields['statusId'] = $type;
 
@@ -101,7 +101,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['PublicKeyId'] = $this->public_key_id;
+        $fields['publicKeyId'] = $this->public_key_id;
 
         $response = $this->createTransaccion('complete', $fields, 'POST');
 
@@ -129,7 +129,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['PublicKeyId'] = $this->public_key_id;
+        $fields['publicKeyId'] = $this->public_key_id;
 
         $fields['id'] = $idPago;
 
@@ -158,7 +158,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['PublicKeyId'] = $this->public_key_id;
+        $fields['publicKeyId'] = $this->public_key_id;
 
         $fields['id'] = $idPago;
 
@@ -193,15 +193,12 @@ class Instapago
         $args[$key] = $fields;
 
         try {
-
             $request = $this->client->request($method, $url, $args);
             $body = $request->getBody()->getContents();
             $response = json_decode($body, true);
 
             return $response;
-
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
-
             throw new Exceptions\TimeoutException('Cannot connect to api.instapago.com');
         }
     }
@@ -212,41 +209,41 @@ class Instapago
    *
    * @return array datos de transaccion
    */
-  public function checkResponseCode($response)
-  {
-      $code = $response['code'];
-      $msg = $response['message'];
+    public function checkResponseCode($response)
+    {
+        $code = $response['code'];
+        $msg = $response['message'];
 
-      if ($code == 400) {
-          throw new Exceptions\InstapagoException($msg);
-      }
+        if ($code == 400) {
+            throw new Exceptions\InstapagoException($msg);
+        }
 
-      if ($code == 401) {
-          throw new Exceptions\InstapagoException($msg);
-      }
+        if ($code == 401) {
+            throw new Exceptions\InstapagoException($msg);
+        }
 
-      if ($code == 403) {
-          throw new Exceptions\InstapagoException($msg);
-      }
+        if ($code == 403) {
+            throw new Exceptions\InstapagoException($msg);
+        }
 
-      if ($code == 500) {
-          throw new Exceptions\InstapagoException($msg);
-      }
+        if ($code == 500) {
+            throw new Exceptions\InstapagoException($msg);
+        }
 
-      if ($code == 503) {
-          throw new Exceptions\InstapagoException($msg);
-      }
+        if ($code == 503) {
+            throw new Exceptions\InstapagoException($msg);
+        }
 
-      if ($code == 201) {
-          return [
+        if ($code == 201) {
+            return [
             'code'              => $code,
             'msg_banco'         => $response['message'],
             'voucher'           => html_entity_decode($response['voucher']),
             'id_pago'           => $response['id'],
             'reference'         => $response['reference'],
-        ];
-      }
+            ];
+        }
 
-      throw new \Exception('Not implemented yet');
-  }
+        throw new \Exception('Not implemented yet');
+    }
 }

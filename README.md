@@ -41,13 +41,7 @@ use Socialgest\Instapago\Instapago;
 
 ## Configuration
 
-To publish the packages configuration file, run the following `vendor:publish` command:
-
-```
-php artisan vendor:publish
-```
-
-## Set in .env
+### Set in .env
 
 ```
 INSTAPAGO_KEY_ID = 74D4A278-C3F8-4D7A-9894-FA0571D7E023

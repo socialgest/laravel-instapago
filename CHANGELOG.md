@@ -6,21 +6,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## 2.0.0 - 2017-02-27
 
-
 ### Added
-- Nothing
-
-### Deprecated
-- Nothing
-
-### Fixed
-- Nothing
-
-### Removed
-- Nothing
-
-### Security
-- Nothing
+- Agregados métodos para la gestión de pagos.
+- Agregados TEST
+- Agregada documentación
 
 ## 1.0.0 - 2016-10-27
 

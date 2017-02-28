@@ -27,6 +27,7 @@
  * @copyright 2016 Angel Cruz
  */
 use \PHPUnit_Framework_TestCase as TestCase;
+use Socialgest\Instapago\Instapago;
 
 class ApiTest extends TestCase
 {
@@ -35,37 +36,34 @@ class ApiTest extends TestCase
 
     protected function setUp()
     {
-        $this->api = new \Instapago\Api(
-      '74D4A278-C3F8-4D7A-9894-FA0571D7E023',
-      'e9a5893e047b645fed12c82db877e05a'
-    );
+        $this->api = new Instapago();
     }
 
     private function _dataPagoPrueba()
     {
         return [
-            'amount'         => '200',
-            'description'    => 'test',
-            'card_holder'    => 'juan peñalver',
-            'card_holder_id' => '11111111',
-            'card_number'    => '4111111111111111',
-            'cvc'            => '123',
-            'expiration'     => '12/2020',
-            'ip'             => '127.0.0.1',
+            'amount' => '200',
+            'description' => 'test',
+            'cardHolder' => 'jon doe',
+            'cardHolderId' => '11111111',
+            'cardNumber' => '4111111111111111',
+            'cvc' => '123',
+            'expirationDate' => '12/2019',
+            'IP' => '127.0.0.1',
         ];
     }
 
     private function _dataPagoPruebaError()
     {
         return [
-            'amount'         => '200',
-            'description'    => 'test',
-            'card_holder'    => 'juan peñalver',
-            'card_holder_id' => '11111111',
-            'card_number'    => '4111111111111112',
-            'cvc'            => '123',
-            'expiration'     => '12/2020',
-            'ip'             => '127.0.0.1',
+            'amount' => '200',
+            'description' => 'test',
+            'cardHolder' => 'jon doe',
+            'cardHolderId' => '11111111',
+            'cardNumber' => '411111111111111',
+            'cvc' => '123',
+            'expirationDate' => '12/2019',
+            'IP' => '127.0.0.1',
         ];
     }
 
@@ -74,7 +72,7 @@ class ApiTest extends TestCase
         try {
             $data = $this->_dataPagoPruebaError();
             $pago = $this->api->directPayment($data);
-        } catch (\Instapago\Exceptions\InvalidInputException $e) {
+        } catch (\Socialgest\Instapago\Instapago\Exceptions\InstapagoException $e) {
             $this->assertContains('Error al validar los datos enviados', $e->getMessage());
         }
     }
@@ -101,33 +99,33 @@ class ApiTest extends TestCase
   /**
    * @depends testCreaPagoReserva
    */
-  public function testContinuarPago($pago)
-  {
-      $continue = $this->api->continuePayment([
-      'id'     => $pago['id_pago'],
-      'amount' => '200',
-    ]);
+    public function testContinuarPago($pago)
+    {
+        $continue = $this->api->continuePayment([
+        'id'     => $pago['id_pago'],
+        'amount' => '200',
+        ]);
 
-      $this->assertContains('pago completado', strtolower($continue['msg_banco']));
-  }
+        $this->assertContains('pago completado', strtolower($continue['msg_banco']));
+    }
 
   /**
    * @depends testCreaPagoDirecto
    */
-  public function testInfoPago($pago)
-  {
-      $info = $this->api->query($pago['id_pago']);
-      $this->assertContains('autorizada', strtolower($info['msg_banco']));
-  }
+    public function testInfoPago($pago)
+    {
+        $info = $this->api->query($pago['id_pago']);
+        $this->assertContains('autorizada', strtolower($info['msg_banco']));
+    }
 
   /**
    * @depends testCreaPagoDirecto
    * En modo pruebas este método no funciona.
    * El personal de instapago asegura que en producción no hay problemas
    */
-  public function testCancelPago($pago)
-  {
-      $info = $this->api->cancel($pago['id_pago']);
-      $this->assertContains('el pago ha sido anulado', strtolower($info['msg_banco']));
-  }
+    public function testCancelPago($pago)
+    {
+        $info = $this->api->cancel($pago['id_pago']);
+        $this->assertContains('el pago ha sido anulado', strtolower($info['msg_banco']));
+    }
 }
