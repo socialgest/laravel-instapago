@@ -1,4 +1,4 @@
-![Php Instapago](asset/logo.png)
+![Php Instapago](../asset/logo.png)
 <p align="center">
 Documentación de la librería <b>Instapago</b>
 </p>
