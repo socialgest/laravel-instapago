@@ -111,7 +111,7 @@ class Instapago
      * Este método funciona para procesar un bloqueo o pre-autorización
      * para así procesarla y hacer el cobro respectivo.
      *
-     * @param string $id_pago ID del pago a consultar
+     * @param string $idPago ID del pago a consultar
      *
      * @throws Exceptions\InstapagoException
      *
@@ -152,11 +152,11 @@ class Instapago
             'id' => $idPago,
         ]);
 
-        $fields['KeyID'] = $this->key_id;
-
-        $fields['PublicKeyId'] = $this->public_key_id;
-
-        $fields['id'] = $idPago;
+        $fields = [
+        'KeyID'        => $this->key_id,
+        'PublicKeyId'  => $this->public_key_id,
+        'id'           => $idPago,
+        ];
 
         $response = $this->createTransaccion('payment', $fields, 'DELETE');
 
