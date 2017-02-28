@@ -16,8 +16,8 @@ class Instapago
 
     public function __construct()
     {
-        $this->key_id = env('INSTAPAGO_KEY_ID');
-        $this->public_key_id = env('INSTAPAGO_PUBLIC_KEY_ID');
+        $this->key_id = config('instapago.key_id');
+        $this->public_key_id = config('instapago.public_key_id');
         $this->client = new Client([
             'base_uri' => self::API_HOST,
             'timeout'  => self::TIMEOUT,
@@ -68,11 +68,12 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['publicKeyId'] = $this->public_key_id;
+        $fields['PublicKeyId'] = $this->public_key_id;
 
         $fields['statusId'] = $type;
 
         $response = $this->createTransaccion('payment', $fields, 'POST');
+
 
         $result = $this->checkResponseCode($response);
 
@@ -97,7 +98,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['publicKeyId'] = $this->public_key_id;
+        $fields['PublicKeyId'] = $this->public_key_id;
 
         $response = $this->createTransaccion('complete', $fields, 'POST');
 
@@ -125,7 +126,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['publicKeyId'] = $this->public_key_id;
+        $fields['PublicKeyId'] = $this->public_key_id;
 
         $fields['id'] = $idPago;
 
@@ -154,7 +155,7 @@ class Instapago
 
         $fields['KeyID'] = $this->key_id;
 
-        $fields['publicKeyId'] = $this->public_key_id;
+        $fields['PublicKeyId'] = $this->public_key_id;
 
         $fields['id'] = $idPago;
 

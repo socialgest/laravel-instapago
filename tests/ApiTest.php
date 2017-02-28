@@ -26,6 +26,8 @@
  * @license MIT License
  * @copyright 2016 Angel Cruz
  */
+namespace Socialgest\Instapago;
+
 use \PHPUnit_Framework_TestCase as TestCase;
 use Socialgest\Instapago\Instapago;
 
@@ -39,48 +41,20 @@ class ApiTest extends TestCase
         $this->api = new Instapago();
     }
 
-    private function _dataPagoPrueba()
-    {
-        return [
-            'amount'         => '200',
-            'description'    => 'test',
-            'cardHolder'     => 'jon doe',
-            'cardHolderId'   => '11111111',
-            'cardNumber'     => '4111111111111111',
-            'cvc'            => '123',
-            'expirationDate' => '12/2019',
-            'IP'             => '127.0.0.1',
-        ];
-    }
-
-    private function _dataPagoPruebaError()
-    {
-        return [
-            'amount'         => '200',
-            'description'    => 'test',
-            'cardHolder'     => 'jon doe',
-            'cardHolderId'   => '11111111',
-            'cardNumber'     => '411111111111111',
-            'cvc'            => '123',
-            'expirationDate' => '12/2019',
-            'IP'             => '127.0.0.1',
-        ];
-    }
-
-    public function testBadData()
-    {
-        try {
-            $data = $this->_dataPagoPruebaError();
-            $pago = $this->api->directPayment($data);
-        } catch (\Socialgest\Instapago\Instapago\Exceptions\InstapagoException $e) {
-            $this->assertContains('Error al validar los datos enviados', $e->getMessage());
-        }
-    }
-
     public function testCreaPagoDirecto()
     {
-        $data = $this->_dataPagoPrueba();
-        $pago = $this->api->directPayment($data);
+        $paymentData = [
+            'amount' => '200',
+            'description' => 'test',
+            'cardHolder' => 'jon doe',
+            'cardHolderId' => '11111111',
+            'cardNumber' => '4111111111111111',
+            'cvc' => '123',
+            'expirationDate' => '12/2019',
+            'IP' => '127.0.0.1',
+        ];
+
+        $pago = $this->api->directPayment($paymentData);
         $this->assertEquals(201, $pago['code']);
 
         return $pago;
@@ -88,8 +62,17 @@ class ApiTest extends TestCase
 
     public function testCreaPagoReserva()
     {
-        $data = $this->_dataPagoPrueba();
-        $pago = $this->api->reservePayment($data);
+        $paymentData = [
+            'amount' => '200',
+            'description' => 'test',
+            'cardHolder' => 'jon doe',
+            'cardHolderId' => '11111111',
+            'cardNumber' => '4111111111111111',
+            'cvc' => '123',
+            'expirationDate' => '12/2019',
+            'IP' => '127.0.0.1',
+        ];
+        $pago = $this->api->reservePayment($paymentData);
         $this->assertEquals(201, $pago['code']);
         $this->assertContains('pago aprobado', strtolower($pago['msg_banco']));
 
