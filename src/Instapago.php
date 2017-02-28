@@ -140,7 +140,7 @@ class Instapago
      * Cancelar Pago
      * Este método funciona para cancelar un pago previamente procesado.
      *
-     * @param string $id_pago ID del pago a cancelar
+     * @param string $idPago ID del pago a cancelar
      *
      * @throws Exceptions\InstapagoException
      *
@@ -169,9 +169,9 @@ class Instapago
      * Realiza Transaccion
      * Efectúa y retorna una respuesta a un metodo de pago.
      *
-     * @param $url string endpoint a consultar
+     * @param string $url string endpoint a consultar
      * @param $fields array datos para la consulta
-     * @param $method string verbo http de la consulta
+     * @param string $method string verbo http de la consulta
      *
      * @return array resultados de la transaccion
      */
