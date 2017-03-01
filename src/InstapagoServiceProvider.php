@@ -25,7 +25,7 @@ class InstapagoServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('Socialgest\Instapago\Instapago', function($app) {
+        $this->app->bind('Socialgest\Instapago\Instapago', function ($app) {
             return new Instapago($app);
         });
     }

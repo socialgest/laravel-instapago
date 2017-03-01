@@ -3,8 +3,6 @@
 namespace Socialgest\Instapago;
 
 use GuzzleHttp\Client;
-use Validator;
-use Exception;
 
 class Instapago
 {
@@ -15,7 +13,7 @@ class Instapago
     protected $key_id;
     protected $public_key_id;
     protected $client;
-    
+
     public function __construct()
     {
         $this->key_id = config('instapago.key_id');
@@ -23,44 +21,225 @@ class Instapago
         $this->client = new Client([
             'base_uri' => self::API_HOST,
             'timeout'  => self::TIMEOUT,
-        ]); 
+        ]);
     }
 
     /**
-     * Friendly welcome
+     * Crear un pago diferido o reservado.
      *
-     * @param string $phrase Phrase to return
+     * @param array<string> $fields Los campos necesarios para procesar el pago.
      *
-     * @return string Returns the phrase passed in
+     * @return array<string> Respuesta de Instapago
      */
-    public function createPayment($fields)
+    public function reservePayment($fields)
     {
+        return $this->createPayment('1', $fields);
+    }
+
+    /**
+     * Crear un pago directo.
+     *
+     * @param array<string> $fields Los campos necesarios
+     *                              para procesar el pago.
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
+    public function directPayment($fields)
+    {
+        return $this->createPayment('2', $fields);
+    }
+
+    /**
+     * Crear un pago.
+     *
+     * @param string        $type   tipo de pago ('1' o '2')
+     * @param array<string> $fields Los campos necesarios
+     *                              para procesar el pago.
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
+    public function createPayment($type, $fields)
+    {
+        (new MyValidator())->payment()->checkThis($fields);
+
         $fields['KeyID'] = $this->key_id;
+
         $fields['PublicKeyId'] = $this->public_key_id;
-        $rules = array(
-            'KeyID' => 'required',
-            'PublicKeyId' => 'required',
-            'Amount' => 'required|string',
-            'Description' => 'required|string|min:1|max:50',
-            'CardHolder' => 'required|regex:/^[A-Z üÜáéíóúÁÉÍÓÚñÑ]{1,50}$/i',
-            'CardHolderId' =>  'required|numeric|digits_between:6,8',
-            'CardNumber' => 'required|numeric|digits_between:15,16',
-            'CVC' => 'required|numeric|digits:3',
-            'ExpirationDate' => 'required|date_format:m/Y|after:tomorrow',
-            'StatusId' => 'required|integer|min:1|max:2',
-            'IP' => 'required|ip',
-        );
-        $validator = Validator::make($fields, $rules);
-        if($validator->fails()) 
-        {
-            $return['code'] = 399;
-            $return['error'] = $validator->errors()->all()[0];
-            $return = json_decode(json_encode($return));
-            return $return;
-        }
-        $response = $this->client->request('POST', 'payment', [
-            'form_params' => $fields
+
+        $fields['statusId'] = $type;
+
+        $response = $this->createTransaccion('payment', $fields, 'POST');
+
+        $result = $this->checkResponseCode($response);
+
+        return $result;
+    }
+
+    /**
+     * Completar Pago
+     * Este método funciona para procesar un bloqueo o pre-autorización
+     * para así procesarla y hacer el cobro respectivo.
+     *
+     * @param array<string> $fields Los campos necesarios
+     *                              para procesar el pago.
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
+    public function continuePayment($fields)
+    {
+        (new MyValidator())->payment()->checkThis($fields);
+
+        $fields['KeyID'] = $this->key_id;
+
+        $fields['PublicKeyId'] = $this->public_key_id;
+
+        $response = $this->createTransaccion('complete', $fields, 'POST');
+
+        $result = $this->checkResponseCode($response);
+
+        return $result;
+    }
+
+    /**
+     * Información/Consulta de Pago
+     * Este método funciona para procesar un bloqueo o pre-autorización
+     * para así procesarla y hacer el cobro respectivo.
+     *
+     * @param string $idPago ID del pago a consultar
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
+    public function query($idPago)
+    {
+        (new Validator())->query()->checkThis([
+            'id' => $idPago,
         ]);
-        return json_decode($response->getBody());
+
+        $fields['KeyID'] = $this->key_id;
+
+        $fields['PublicKeyId'] = $this->public_key_id;
+
+        $fields['id'] = $idPago;
+
+        $response = $this->createTransaccion('payment', $fields, 'POST');
+
+        $result = $this->checkResponseCode($response);
+
+        return $result;
+    }
+
+    /**
+     * Cancelar Pago
+     * Este método funciona para cancelar un pago previamente procesado.
+     *
+     * @param string $idPago ID del pago a cancelar
+     *
+     * @throws Exceptions\InstapagoException
+     *
+     * @return array<string> Respuesta de Instapago
+     */
+    public function cancel($idPago)
+    {
+        (new Validator())->query()->checkThis([
+            'id' => $idPago,
+        ]);
+
+        $fields = [
+        'KeyID'        => $this->key_id,
+        'PublicKeyId'  => $this->public_key_id,
+        'id'           => $idPago,
+        ];
+
+        $response = $this->createTransaccion('payment', $fields, 'DELETE');
+
+        $result = $this->checkResponseCode($response);
+
+        return $result;
+    }
+
+    /**
+     * Realiza Transaccion
+     * Efectúa y retorna una respuesta a un metodo de pago.
+     *
+     * @param string $url string endpoint a consultar
+     * @param $fields array datos para la consulta
+     * @param string $method string verbo http de la consulta
+     *
+     * @return array resultados de la transaccion
+     */
+    public function createTransaccion($url, $fields, $method)
+    {
+        $args = [];
+
+        if (!in_array($method, ['GET', 'POST', 'DELETE'])) {
+            throw new Exception('Not implemented yet', 1);
+        }
+
+        $key = ($method == 'GET') ? 'query' : 'form_params';
+
+        $args[$key] = $fields;
+
+        try {
+            $request = $this->client->request($method, $url, $args);
+            $body = $request->getBody()->getContents();
+            $response = json_decode($body, true);
+
+            return $response;
+        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+            throw new Exceptions\TimeoutException('Cannot connect to api.instapago.com');
+        }
+    }
+
+    /**
+     * Verifica y retornar el resultado de la transaccion.
+     *
+     * @param $response datos de la consulta
+     *
+     * @return array datos de transaccion
+     */
+    public function checkResponseCode($response)
+    {
+        $code = $response['code'];
+        $msg = $response['message'];
+
+        if ($code == 400) {
+            throw new Exceptions\InstapagoException($msg);
+        }
+
+        if ($code == 401) {
+            throw new Exceptions\InstapagoException($msg);
+        }
+
+        if ($code == 403) {
+            throw new Exceptions\InstapagoException($msg);
+        }
+
+        if ($code == 500) {
+            throw new Exceptions\InstapagoException($msg);
+        }
+
+        if ($code == 503) {
+            throw new Exceptions\InstapagoException($msg);
+        }
+
+        if ($code == 201) {
+            return [
+            'code'              => $code,
+            'msg_banco'         => $response['message'],
+            'voucher'           => html_entity_decode($response['voucher']),
+            'id_pago'           => $response['id'],
+            'reference'         => $response['reference'],
+            ];
+        }
+
+        throw new \Exception('Not implemented yet');
     }
 }
