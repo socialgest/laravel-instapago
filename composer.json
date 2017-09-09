@@ -52,10 +52,10 @@
         },        
         "laravel": {
             "providers": [
-                "Socialgest\\Instapago\\InstapagoServiceProvider::class"
+                "Socialgest\\Instapago\\InstapagoServiceProvider"
             ],
             "aliases": {
-                "Instapago": "Socialgest\\Instapago\\Facades\\Instapago::class"
+                "Instapago": "Socialgest\\Instapago\\Facades\\Instapago"
             }
         }
     },
