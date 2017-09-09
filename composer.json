@@ -49,6 +49,14 @@
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
+        },        
+        "laravel": {
+            "providers": [
+                "Socialgest\\Instapago\\InstapagoServiceProvider"
+            ],
+            "aliases": {
+                "Instapago": "Socialgest\\Instapago\\Facades\\Instapago"
+            }
         }
     },
     "config": {
